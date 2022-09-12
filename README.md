@@ -4,6 +4,14 @@ This is an applet to help manage Earthstar keypairs, shares, and replica servers
 
 These configurations can then be used across different Earthstar apps on the same origin. Those apps can be made any way the author wants!
 
+To test it, clone this repo and run the following:
+
+```
+yarn
+
+yarn dev
+```
+
 - [x] Create new keypairs
 - [x] Add existing keypairs
 - [x] Inspect current keypair (copy address/secret)
