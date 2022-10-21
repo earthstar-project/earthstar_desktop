@@ -504,10 +504,10 @@ detect-libc@^2.0.0:
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-2.0.1.tgz#e1897aa88fa6ad197862937fbc0441ef352ee0cd"
   integrity sha512-463v3ZeIrcWtdgIg6vI6XUncguvr2TnGl4SzDXinkt9mSLpBJKXT3mW6xT3VQdDN11+WVs29pgvivTc4Lp8v+w==
 
-earthstar@^10.0.0-alpha.2:
-  version "10.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/earthstar/-/earthstar-10.0.0-alpha.2.tgz#2c67bbd1cdad7c846f5ccfbdb4ca8f2e64b1de69"
-  integrity sha512-t9dMX/i8N6CDYN2FbzZPM6kwSv6JIBGdd/4Dj2CtghR7QHo93CUE94I09k1sDTZY057HaF105/r5YMhxN38sRg==
+earthstar@^10.0.0-alpha.3:
+  version "10.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/earthstar/-/earthstar-10.0.0-alpha.3.tgz#e4f0a644ac112aee2170443009c94eba767606f0"
+  integrity sha512-jsieSIs+NHDYwSpzWVu93BNp5qaBB/aIvobqFxVrk57zThVUhHyfrVvnsELuROaIgf6npu4+AvUqZY+5uocb3A==
   dependencies:
     "@deno/sham-weakref" "~0.1.0"
     "@deno/shim-timers" "~0.1.0"
@@ -958,10 +958,10 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-earthstar@^4.0.0-alpha.1:
-  version "4.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/react-earthstar/-/react-earthstar-4.0.0-alpha.1.tgz#c8d287890dd2b0411aac558b303b1b532ceb2c37"
-  integrity sha512-igaW40712O43EfZ9qngB7C41rIG4KeQFSR+EpZJVFk2pouo/xYC3GtRpKQkE2I5A1AQZQ9IQg+nh4+zF60WGag==
+react-earthstar@^4.0.0-alpha.6:
+  version "4.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/react-earthstar/-/react-earthstar-4.0.0-alpha.6.tgz#ba8db5f7abfa751f93e4380d4b585b046504b076"
+  integrity sha512-CGBXo9CDQKZ7RXoPjJnjIIvdAsNOwZQiXbdG3LugbyqW3OMCowgp/9Fv8j+xGG0Tv3l8ZrNz1hSGuO1FWflD0Q==
 
 react-refresh@^0.14.0:
   version "0.14.0"

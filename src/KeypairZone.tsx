@@ -1,10 +1,10 @@
 import * as React from "react";
 import * as Earthstar from "earthstar";
-import { useIdentity } from "react-earthstar";
+import { useKeypair } from "react-earthstar";
 import CopyButton from "./CopyButton";
 
 export function KeypairZone() {
-  const [keypair] = useIdentity();
+  const [keypair] = useKeypair();
 
   return (
     <fieldset>
@@ -15,7 +15,7 @@ export function KeypairZone() {
 }
 
 function KeypairInfo({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
-  const [, setKeypair] = useIdentity();
+  const [, setKeypair] = useKeypair();
 
   const parsed = Earthstar.parseAuthorAddress(keypair.address);
 
@@ -76,7 +76,7 @@ function KeypairCreationOptions() {
 }
 
 function KeypairAddForm({ cancel }: { cancel: () => void }) {
-  const [existingKeypair, setKeypair] = useIdentity();
+  const [existingKeypair, setKeypair] = useKeypair();
   const [address, setAddress] = React.useState("");
   const [secret, setSecret] = React.useState("");
   const [error, setError] = React.useState("");
@@ -88,7 +88,7 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
 
         const keypair = { address, secret };
 
-        const isValid = await Earthstar.Crypto.checkAuthorKeypairIsValid(
+        const isValid = await Earthstar.Crypto.checkKeypairIsValid(
           keypair,
         );
 
@@ -152,7 +152,7 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
           <tr>
             <td>
               <button
-              type="button"
+                type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   cancel();
@@ -174,7 +174,7 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
 }
 
 function KeypairCreatorForm({ cancel }: { cancel: () => void }) {
-  const [identity, setCurrentIdentity] = useIdentity();
+  const [identity, setCurrentIdentity] = useKeypair();
   const [shortName, setShortName] = React.useState("");
   const [proposedKeypair, setProposedKeypair] = React.useState<
     Earthstar.AuthorKeypair | null
@@ -258,7 +258,7 @@ function KeypairCard({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
   return (
     <div>
       <div>
-        <span>+</span>
+        <span>@</span>
         <span>{parsed.name}</span>
         <span>.</span>
         <span>{parsed.pubkey}</span>
