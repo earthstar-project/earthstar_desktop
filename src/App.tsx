@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as Earthstar from "earthstar";
 import { ClientSettingsContext } from "react-earthstar";
-import { MenuBar } from "./MenuBar";
+import { MenuBar } from "./MenuBar.tsx";
 import "./App.css";
 
 function App() {

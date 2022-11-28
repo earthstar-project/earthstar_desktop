@@ -6,9 +6,9 @@ import {
   useServerSettings,
   useShareSettings,
 } from "react-earthstar";
-import { KeypairZone } from "./KeypairZone";
-import { ShareZone } from "./ShareZone";
-import { ServerZone } from "./ServerZone";
+import { KeypairZone } from "./KeypairZone.tsx";
+import { ShareZone } from "./ShareZone.tsx";
+import { ServerZone } from "./ServerZone.tsx";
 import "./MenuBar.css";
 
 type Mode = "none" | "author" | "shares" | "servers";
@@ -45,7 +45,7 @@ export function MenuBar() {
         <MenuItem
           selected={activeMode === "shares"}
           onSelect={makeOnSelect("shares", activeMode, setActiveMode)}
-          className='shares-button'
+          className="shares-button"
         >
           <SharesItem />
         </MenuItem>
@@ -78,7 +78,9 @@ function MenuItem(
 ) {
   return (
     <button
-      className={`menu-button ${selected ? "menu-button-active" : ""} ${className}`}
+      className={`menu-button ${
+        selected ? "menu-button-active" : ""
+      } ${className}`}
       onClick={onSelect}
     >
       {children}
@@ -94,6 +96,7 @@ function AuthorItem() {
       {author
         ? (
           <AuthorLabel
+            className="author-label"
             address={author.address}
             viewingAuthorSecret={author.secret}
           />

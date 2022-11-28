@@ -6,7 +6,7 @@ import {
   useShareSettings,
 } from "react-earthstar";
 import * as Earthstar from "earthstar";
-import CopyButton from "./CopyButton";
+import CopyButton from "./CopyButton.tsx";
 import './ShareZone.css'
 
 type PossibleChoices =
