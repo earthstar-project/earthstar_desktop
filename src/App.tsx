@@ -1,36 +1,21 @@
 import * as React from "react";
 import * as Earthstar from "earthstar";
-import { ReplicaDriverWeb } from "earthstar/browser";
-import {
-  LocalStorageSettingsWriter,
-  Peer,
-  useLocalStorageEarthstarSettings,
-} from "react-earthstar";
+import { ClientSettingsContext } from "react-earthstar";
+import { MenuBar } from "./MenuBar";
 import "./App.css";
 
-import { KeypairZone } from "./KeypairZone";
-import { ShareZone } from "./ShareZone";
-import { ServerZone } from "./ServerZone";
-
 function App() {
-  const init = useLocalStorageEarthstarSettings("");
+  const settings = React.useMemo(() => {
+    return new Earthstar.ClientSettings();
+  }, []);
 
   return (
-    <Peer
-      {...init}
-      onCreateShare={(addr) => {
-        const driver = new ReplicaDriverWeb(addr);
-        return new Earthstar.Replica({ driver });
-      }}
-    >
-      <LocalStorageSettingsWriter storageKey="" />
+    <ClientSettingsContext.Provider value={settings}>
+      <MenuBar />
       <div>
-        <h1>earthstar control panel</h1>
-        <KeypairZone />
-        <ShareZone />
-        <ServerZone />
+        {/* Applets listed here! */}
       </div>
-    </Peer>
+    </ClientSettingsContext.Provider>
   );
 }
 

@@ -1,19 +1,18 @@
 import * as React from "react";
-import { useReplicaServers } from "react-earthstar";
+import { useServerSettings } from "react-earthstar";
+import "./ServerZone.css"
 
 export function ServerZone() {
   const [newServer, setNewServer] = React.useState("");
-  const [replicaServers, setReplicaServers] = useReplicaServers();
-
-  console.log(replicaServers);
+  const [servers, addServer] = useServerSettings();
 
   return (
-    <fieldset>
-      <legend>Replica servers</legend>
+    <fieldset id="server-zone">
+      <legend>Servers</legend>
 
-      {replicaServers.length === 0
+      {servers.length === 0
         ? <div>No replica servers known.</div>
-        : replicaServers.map((url) => {
+        : servers.map((url) => {
           return <ServerItem url={url} />;
         })}
 
@@ -21,7 +20,11 @@ export function ServerZone() {
         onSubmit={(e) => {
           e.preventDefault();
 
-          setReplicaServers([...replicaServers, newServer]);
+          const isValid = addServer(newServer);
+
+          if (!isValid) {
+            alert("Please provide a valid server URL.");
+          }
 
           setNewServer("");
         }}
@@ -41,18 +44,14 @@ export function ServerZone() {
 }
 
 function ServerItem({ url }: { url: string }) {
-  const [serverUrls, setServerUrls] = useReplicaServers();
+  const [, , removeServer] = useServerSettings();
 
   return (
     <li>
       {url}{" "}
       <button
         onClick={() => {
-          const nextServerUrls = serverUrls.filter((serverUrl) =>
-            serverUrl !== url
-          );
-
-          setServerUrls(nextServerUrls);
+          removeServer(url);
         }}
       >
         Forget

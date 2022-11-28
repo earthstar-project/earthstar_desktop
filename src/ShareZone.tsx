@@ -1,7 +1,13 @@
 import * as React from "react";
-import { useAddShare, usePeer, useShareSecret } from "react-earthstar";
+import {
+  ShareLabel,
+  useAuthorSettings,
+  useShareSecretSettings,
+  useShareSettings,
+} from "react-earthstar";
 import * as Earthstar from "earthstar";
 import CopyButton from "./CopyButton";
+import './ShareZone.css'
 
 type PossibleChoices =
   | { type: "not_made" }
@@ -13,9 +19,7 @@ type PossibleChoices =
   };
 
 export function ShareZone() {
-  const peer = usePeer();
-
-  const shares = peer.shares();
+  const [shares] = useShareSettings();
 
   const [choice, setChoice] = React.useState<
     { type: "not_made" } | { type: "create" } | { type: "add" } | {
@@ -27,7 +31,7 @@ export function ShareZone() {
   );
 
   return (
-    <fieldset>
+    <fieldset id="share-zone">
       <legend>Shares</legend>
       {choice.type === "not_made"
         ? <ShareList shares={shares} setChoice={setChoice} />
@@ -99,17 +103,21 @@ function ShareItem(
     onClickAddSecret: () => void;
   },
 ) {
-  const peer = usePeer();
-  const [secret] = useShareSecret(address);
+  const [author] = useAuthorSettings();
+  const [, , removeShare] = useShareSettings();
+  const [secrets] = useShareSecretSettings();
+  const secret = secrets[address];
 
   return (
     <li>
-      {address} {secret
+      <ShareLabel address={address} viewingAuthorSecret={author?.secret} />
+      <CopyButton copyValue={address}>Copy address</CopyButton>
+      {secret
         ? <CopyButton copyValue={secret}>Copy secret</CopyButton>
         : <button onClick={onClickAddSecret}>Add secret</button>}
       <button
         onClick={() => {
-          peer.removeReplicaByShare(address);
+          removeShare(address);
         }}
       >
         Forget
@@ -123,7 +131,8 @@ function ShareAddForm(
     goBack: () => void;
   },
 ) {
-  const addShare = useAddShare();
+  const [, addShare] = useShareSettings();
+  const [, addSecret] = useShareSecretSettings();
   const [address, setAddress] = React.useState("");
   const [secret, setSecret] = React.useState("");
 
@@ -134,29 +143,21 @@ function ShareAddForm(
 
         // validate
 
-        const isValid = Earthstar.checkShareIsValid(address);
+        const isValid = addShare(address);
 
         if (Earthstar.isErr(isValid)) {
           alert("The share you provided was not valid!");
           return;
         }
 
-        const secretToUse = secret.length === 0 ? undefined : secret;
-
-        if (secretToUse) {
-          const isValid = Earthstar.Crypto.checkKeypairIsValid({
-            shareAddress: address,
-            secret: secret,
-          });
+        if (secret.length > 0) {
+          const isValid = addSecret(address, secret);
 
           if (Earthstar.isErr(isValid)) {
             alert("The secret you provided was not correct!");
             return;
           }
         }
-
-        // save it
-        await addShare(address, secret.length === 0 ? undefined : secret);
 
         goBack();
       }}
@@ -202,7 +203,8 @@ function ShareCreatorForm(
   >(null);
   const [error, setError] = React.useState<null | string>(null);
 
-  const addShare = useAddShare();
+  const [, addShare] = useShareSettings();
+  const [, addSecret] = useShareSecretSettings();
 
   return (
     <form
@@ -210,7 +212,8 @@ function ShareCreatorForm(
         e.preventDefault();
 
         if (proposedKeypair) {
-          await addShare(proposedKeypair.shareAddress, proposedKeypair.secret);
+          addShare(proposedKeypair.shareAddress);
+          addSecret(proposedKeypair.shareAddress, proposedKeypair.secret);
         }
 
         goBack();
@@ -273,24 +276,20 @@ function ShareAddSecretForm(
   { address, cancel: goBack }: { address: string; cancel: () => void },
 ) {
   const [secret, setSecret] = React.useState("");
-  const [, setShareSecret] = useShareSecret(address);
+  const [, setShareSecret] = useShareSecretSettings();
 
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault();
 
-        const isValid = await Earthstar.Crypto.checkKeypairIsValid({
-          address,
-          secret,
-        });
+        const isValid = setShareSecret(address, secret);
 
         if (Earthstar.isErr(isValid)) {
           alert("That secret is not correct!");
           return;
         }
 
-        setShareSecret(secret);
         goBack();
       }}
     >
