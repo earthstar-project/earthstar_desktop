@@ -32,6 +32,7 @@ function KeypairInfo({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
           className="author-label"
           address={keypair.address}
           viewingAuthorSecret={keypair.secret}
+          iconSize={14}
         />
       </div>
       <hr />

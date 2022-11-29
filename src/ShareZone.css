@@ -1,5 +1,6 @@
 #share-zone {
-	--active-section-color: var(--share-color)
+	--active-section-color: var(--share-color);
+	width: 24em;
 }
 
 #share-list {
