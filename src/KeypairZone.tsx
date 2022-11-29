@@ -77,7 +77,10 @@ function KeypairCreationOptions() {
 
   return (
     <div id="keypair-creation-root">
-      <p>No keypair currently in use.</p>
+      <p id="keypair-explainer">
+        Keypairs are used to sign all Earthstar data with a digital signature.
+        It's impossible to make any changes to a Share without one.
+      </p>
       <button onClick={() => setChoice("create")}>Create a new keypair</button>
       <button onClick={() => setChoice("add")}>Use an existing keypair</button>
     </div>
@@ -124,7 +127,6 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
               <tr>
                 <td
                   colSpan={2}
-                  className="bg-red-100 p-2 border border-red-200 rounded text-red-800"
                 >
                   {error}
                 </td>
@@ -139,7 +141,6 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
               <input
                 value={address}
                 placeholder="@xxxx.xxxx"
-                className="input w-full ml-2"
                 onChange={(e) => setAddress(e.target.value)}
               />
             </td>
@@ -151,7 +152,6 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
             <td>
               <input
                 value={secret}
-                className="input w-full ml-2"
                 type="password"
                 onChange={(e) => setSecret(e.target.value)}
               />

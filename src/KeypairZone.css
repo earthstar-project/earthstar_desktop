@@ -26,7 +26,7 @@
 }
 
 #keypair-creation-root p {
-	margin: 0.3em 0 0.5em 0
+	margin: 0.3em 0 0.5em 0;
 }
 
 #keypair-add-buttons {
@@ -65,11 +65,12 @@
 	max-width: 24em;
 }
 
-#shortname-explainer, #save-reminder {
+#shortname-explainer, #save-reminder, #keypair-explainer {
 	margin: 0.8em 0;
 	font-size: 0.8em;
 	color: rgb(100, 100, 100);
-	max-width: 24em;
+	max-width: 27em;
+	line-height: 1.35em;
 }
 
 #proposed-keypair {

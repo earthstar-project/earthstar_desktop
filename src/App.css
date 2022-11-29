@@ -62,9 +62,10 @@ label {
 }
 
 .author-label {
-  
+  font-family: ui-monospace;
 }
 
 .error-text {
+  font-size: 0.9em;
   color: red;
 }

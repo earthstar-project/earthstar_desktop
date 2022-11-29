@@ -10,12 +10,11 @@ await esbuild.build({
     }),
   ],
   entryPoints: ["./src/main.tsx"],
-	outfile: `./dist/cinnamon-os.js`,
+  outfile: `./dist/cinnamon-os.js`,
   bundle: true,
   format: "esm",
-	platform: 'browser',
-	minify: true,
-	watch: true
+  platform: "browser",
+  //minify: true,
+  sourcemap: "inline",
+  watch: true,
 });
-
-

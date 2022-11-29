@@ -30,7 +30,7 @@ export default function CopyButton({
         setCopied(true);
       }}
     >
-      {copied ? "Copied to clipboard!" : children || "Copy"}
+      {copied ? "Copied\u00A0to\u00A0clipboard!" : children || "Copy"}
     </button>
   );
 }
