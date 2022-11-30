@@ -1,8 +1,4 @@
-import {
-  Peer,
-  Replica,
-  ReplicaDriverWeb,
-} from "https://deno.land/x/earthstar@v10.0.0-beta.6/mod.browser.ts";
+import { Peer, Replica, ReplicaDriverWeb } from "earthstar";
 import * as React from "react";
 import {
   ClientSettingsContext,

@@ -7,6 +7,6 @@
   },
   "tasks": {
     "serve": "file_server",
-    "build": "deno run -A scripts/build.ts"
+    "build-client": "deno run -A scripts/build_client.ts"
   }
 }

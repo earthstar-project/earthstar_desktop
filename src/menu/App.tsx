@@ -12,9 +12,6 @@ function App() {
   return (
     <ClientSettingsContext.Provider value={settings}>
       <MenuBar />
-      <div>
-        {/* Applets listed here! */}
-      </div>
     </ClientSettingsContext.Provider>
   );
 }

@@ -1,0 +1,282 @@
+:root {
+  --main: rgb(105, 96, 255);
+  --between-dark: rgb(136, 114, 96);
+  --between: rgb(185, 177, 196);
+  --pale:  rgb(243, 240, 255)
+}
+
+body {
+  font-family: 'ui-sans-serif';
+  background-color: rgb(248, 248, 248);
+  box-sizing: border-box;
+}
+
+legend {
+  color: white;
+  padding: 0.5em;
+  background: var(--main)
+}
+
+fieldset {
+  border: 2px solid var(--main);
+  background: var(--pale);
+  border-radius: 3px;
+  padding: 0.6em 0.75em;
+}
+
+.app {
+  max-width: 37em;
+  margin: auto;
+}
+
+.listbox-button, .combobox-input {
+  font-size: 1em;
+  padding: 0.7em;
+  border-radius: 0.5em;
+  background: white;
+  border: none;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.066);
+  width: 100%;
+}
+
+.combobox-input {
+  padding: 0.6em;
+  box-shadow: inset 1px 2px 2px rgba(0, 0, 0, 0.139);
+  width: calc(100% - 1.4em);
+  font-size: 0.9em;
+  border: 2px solid rgb(131, 165, 157)
+}
+
+.options-root {
+  position: relative;
+  width: 100%;
+}
+
+.listbox-options, .combobox-options {
+  position: absolute;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5em;
+  margin: 0.2em 0 0 0;
+  background: white;
+  width: calc(100%);
+  list-style: none;
+  padding: 0.2em 0;
+}
+
+.listbox-option {
+  height: 2.2em;
+  padding: 0 0.7em 0 0.7em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.option-root {
+  background: white;
+}
+
+.option-root:nth-child(even) {
+  background-color: rgb(250, 250, 250)
+} 
+
+.combobox-option {
+  height: 3em;
+  padding: 0 0.7em 0 0.7em;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  
+  justify-content: center;
+  
+}
+
+.listbox-option-selected {
+  font-weight: bold;
+}
+
+.listbox-option-active {
+  color: var(--main);
+  background: var(--pale);
+}
+
+.selection-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+}
+
+.selection-arrow {
+  color: rgb(181, 181, 181);
+  font-size: 0.8em;
+}
+
+.checkmark {
+  font-size: 1.1em;
+}
+
+.syncing-servers {
+  color: rgb(109, 109, 109);
+  font-size: 0.8em;
+  margin: 0.5em 0 0 0;
+}
+
+.syncing-servers::before {
+  content: '';
+  border-radius: 100%;
+  width: 8px;
+  height: 8px;
+  margin: 0 0.5ch 0 0;
+  background: rgb(0, 216, 0);
+  display: inline-block;
+}
+
+.not-syncing-servers {
+  color: rgb(109, 109, 109);
+  font-size: 0.8em;
+  margin: 0.5em 0 0 0;
+}
+
+.not-syncing-servers::before {
+ content: '';
+border-radius: 100%;
+width: 8px;
+height: 8px;
+margin: 0 0.5ch 0 0;
+background: rgb(157, 157, 157);
+display: inline-block;
+ 
+  display: inline-block;
+}
+
+#server-settings-connector {
+
+display: block;
+border-left-width: 2px;
+height: 20px;
+border-left-style: dashed;
+border-left-color: var(--main);
+margin-left: 3em;
+}
+
+#hosted-shares-root {
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  margin: 0 0 0.2em 0;
+  
+  background-color: rgb(244, 239, 230);
+}
+
+#hosted-shares-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.hosted-share {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.55em 0.5em 0.45em 0.5em;
+  font-size: 0.9em;
+  
+}
+
+.hosted-share:nth-child(even) {
+  background-color: rgb(229, 221, 212);
+}
+
+.hosted-until {
+  color: var(--between-dark);
+  font-size: 0.9em;
+}
+
+h3, h4 {
+  font-size: 0.9em;
+  color: white;
+  margin: 0;
+  padding: 0.6em 0.5em 0.5em 0.5em;
+  font-weight: normal;
+  background-color: var(--between-dark);
+  border-radius: 5px 5px 0 0;
+}
+
+h4 {
+  color: black;
+
+}
+
+#hosted-share-form {
+  
+  padding: 0.8em 0.5em;
+  
+  
+  background-color: rgb(208, 192, 177);
+  border-radius: 0 0 6px 6px;
+}
+
+#hosted-share-add-btn {
+  align-self: center
+}
+
+#hosted-share-controls {
+  display: flex;
+  justify-content: space-between;
+  min-height: 2em;
+  align-items: center;
+}
+
+.full-share-address {
+  font-size: 0.8em;
+  color: var(--between-dark)
+}
+
+.input-valid-share {
+  border-color: green;
+}
+
+.input-invalid-share {
+  border-color: rgb(150, 68, 56);
+  background: rgb(255, 231, 236)
+}
+
+.host-temp-label {
+  font-size: 0.8em;
+}
+
+#host-temp-root {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5ch;
+}
+
+#date-input {
+  border-radius: 6px;
+  padding: 0.3em;
+  box-shadow: inset 1px 2px 2px rgba(0, 0, 0, 0.139);
+  border: none;
+  font-size: 0.9em;
+}
+
+button {
+  font-size: 12px;
+  padding: 0.4em 0.5em 0.4em 0.5em;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.066);
+  border: 1px solid rgb(172, 188, 216);
+  background: white;
+  border-radius: 6px;
+}
+
+button:disabled {
+  border: 1px solid whitesmoke;
+}
+
+#current-user-info {
+  
+  color: var(--between-dark);
+text-align: right;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+  border-radius: 6px;
+}

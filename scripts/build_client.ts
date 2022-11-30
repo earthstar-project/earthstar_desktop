@@ -9,7 +9,7 @@ await esbuild.build({
       importMapURL,
     }),
   ],
-  entryPoints: ["./src/main.tsx"],
+  entryPoints: ["./src/client/main.tsx"],
   outfile: `./dist/cinnamon-os.js`,
   bundle: true,
   format: "esm",
