@@ -1,21 +1,22 @@
 import * as React from "react";
 import * as Earthstar from "earthstar";
-import { useKeypair } from "react-earthstar";
-import CopyButton from "./CopyButton";
+import { AuthorLabel, useAuthorSettings } from "react-earthstar";
+import CopyButton from "./CopyButton.tsx";
+import "./KeypairZone.css";
 
 export function KeypairZone() {
-  const [keypair] = useKeypair();
+  const [author] = useAuthorSettings();
 
   return (
-    <fieldset>
+    <fieldset id={"keypair-zone"}>
       <legend>Keypair</legend>
-      {keypair ? <KeypairInfo keypair={keypair} /> : <KeypairCreationOptions />}
+      {author ? <KeypairInfo keypair={author} /> : <KeypairCreationOptions />}
     </fieldset>
   );
 }
 
 function KeypairInfo({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
-  const [, setKeypair] = useKeypair();
+  const [, setAuthorSettings] = useAuthorSettings();
 
   const parsed = Earthstar.parseAuthorAddress(keypair.address);
 
@@ -26,9 +27,18 @@ function KeypairInfo({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
   return (
     <div>
       <div>
-        <KeypairCard keypair={keypair} />
+        <AuthorLabel
+          id="signed-in-keypair"
+          className="author-label"
+          address={keypair.address}
+          viewingAuthorSecret={keypair.secret}
+          iconSize={14}
+        />
       </div>
-      <div>
+      <hr />
+      <div id={"general-buttons"}>
+        <CopyButton copyValue={keypair.address}>Copy address</CopyButton>
+        <CopyButton copyValue={keypair.secret}>Copy secret</CopyButton>
         <button
           onClick={() => {
             const isSure = confirm(
@@ -39,10 +49,10 @@ function KeypairInfo({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
               return;
             }
 
-            setKeypair(null);
+            setAuthorSettings(null);
           }}
         >
-          Sign out
+          Forget keypair
         </button>
       </div>
     </div>
@@ -67,8 +77,11 @@ function KeypairCreationOptions() {
   }
 
   return (
-    <div>
-      <p>No keypair currently in use.</p>
+    <div id="keypair-creation-root">
+      <p id="keypair-explainer">
+        Keypairs are used to sign all Earthstar data with a digital signature.
+        It's impossible to make any changes to a Share without one.
+      </p>
       <button onClick={() => setChoice("create")}>Create a new keypair</button>
       <button onClick={() => setChoice("add")}>Use an existing keypair</button>
     </div>
@@ -76,7 +89,7 @@ function KeypairCreationOptions() {
 }
 
 function KeypairAddForm({ cancel }: { cancel: () => void }) {
-  const [existingKeypair, setKeypair] = useKeypair();
+  const [existingKeypair, setKeypair] = useAuthorSettings();
   const [address, setAddress] = React.useState("");
   const [secret, setSecret] = React.useState("");
   const [error, setError] = React.useState("");
@@ -115,7 +128,6 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
               <tr>
                 <td
                   colSpan={2}
-                  className="bg-red-100 p-2 border border-red-200 rounded text-red-800"
                 >
                   {error}
                 </td>
@@ -130,7 +142,6 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
               <input
                 value={address}
                 placeholder="@xxxx.xxxx"
-                className="input w-full ml-2"
                 onChange={(e) => setAddress(e.target.value)}
               />
             </td>
@@ -142,39 +153,35 @@ function KeypairAddForm({ cancel }: { cancel: () => void }) {
             <td>
               <input
                 value={secret}
-                className="input w-full ml-2"
                 type="password"
                 onChange={(e) => setSecret(e.target.value)}
               />
             </td>
           </tr>
-
-          <tr>
-            <td>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  cancel();
-                }}
-              >
-                Cancel
-              </button>
-            </td>
-            <td>
-              <button type="submit" className="btn block">
-                Use identity
-              </button>
-            </td>
-          </tr>
         </tbody>
       </table>
+
+      <div id="keypair-add-buttons">
+        <button type="submit" className="btn block">
+          Use identity
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            cancel();
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
 
 function KeypairCreatorForm({ cancel }: { cancel: () => void }) {
-  const [identity, setCurrentIdentity] = useKeypair();
+  const [identity, setCurrentIdentity] = useAuthorSettings();
   const [shortName, setShortName] = React.useState("");
   const [proposedKeypair, setProposedKeypair] = React.useState<
     Earthstar.AuthorKeypair | null
@@ -197,74 +204,89 @@ function KeypairCreatorForm({ cancel }: { cancel: () => void }) {
         }
       }}
     >
-      <span>@</span>
-      <input
-        value={shortName}
-        spellCheck="false"
-        placeholder={"abcd"}
-        style={{ width: "calc(4ch + 1.25rem)" }}
-        onChange={async (e) => {
-          setShortName(e.target.value);
+      <label id="shortname-label">
+        <div>Pick a shortname</div>
+        <div id="author-name">
+          <span id="author-sigil">@</span>
+          <input
+            id="shortname-input"
+            value={shortName}
+            spellCheck="false"
+            placeholder={"abcd"}
+            onChange={async (e) => {
+              setShortName(e.target.value);
 
-          if (e.target.value.length < 4) {
-            setError(null);
-            setProposedKeypair(null);
-            return;
-          }
+              if (e.target.value.length < 4) {
+                setError(null);
+                setProposedKeypair(null);
+                return;
+              }
 
-          const result = await Earthstar.Crypto.generateAuthorKeypair(
-            e.target.value,
-          );
+              const result = await Earthstar.Crypto.generateAuthorKeypair(
+                e.target.value,
+              );
 
-          if (Earthstar.isErr(result)) {
-            setError(result.message);
-            setProposedKeypair(null);
-            return;
-          }
+              if (Earthstar.isErr(result)) {
+                setError(result.message);
+                setProposedKeypair(null);
+                return;
+              }
 
-          setError(null);
-          setProposedKeypair(result);
-        }}
-      />
+              setError(null);
+              setProposedKeypair(result);
+            }}
+          />
+        </div>
+      </label>
 
-      {error ? <p className="text-red-700 text-sm">{error}</p> : null}
+      {error
+        ? <p id="shortname-error" className="error-text">{error}</p>
+        : null}
       {proposedKeypair
         ? (
           <>
-            <div className="text-4xl font-bold text-gray-300 text-center">
-              ⬇
-            </div>
-            <KeypairCard keypair={proposedKeypair} />
-            <p className="text-sm text-gray-800 dark:text-gray-200">
+            <hr />
+            <fieldset id="proposed-keypair">
+              <legend>Proposed keypair</legend>
+              <KeypairCard keypair={proposedKeypair} />
+            </fieldset>
+            <p id="save-reminder">
               Make sure to save the generated address and secret someplace safe.
               Only you have access to it, so it can never be recovered or reset!
             </p>
-            <button className="btn">Use this identity</button>
+            <div id="keypair-creator-btns">
+              <button className="btn">Use this keypair</button>
+              <button onClick={cancel}>Cancel</button>
+            </div>
           </>
         )
-        : null}
-      <button onClick={cancel}>Cancel</button>
+        : (
+          <>
+            <p id="shortname-explainer">
+              Shortnames are there to help humans recognise keypairs, and are
+              permanent. Don't get hung up on choosing one, as you can change
+              your display name as many times as you like.
+            </p>
+            <hr />
+            <div id="keypair-creator-btns">
+              <button onClick={cancel}>Cancel</button>
+            </div>
+          </>
+        )}
     </form>
   );
 }
 
 function KeypairCard({ keypair }: { keypair: Earthstar.AuthorKeypair }) {
-  const parsed = Earthstar.parseAuthorAddress(keypair.address);
-
-  if (Earthstar.isErr(parsed)) {
-    return <div>Something's wrong with the keypair.</div>;
-  }
-
   return (
-    <div>
-      <div>
-        <span>@</span>
-        <span>{parsed.name}</span>
-        <span>.</span>
-        <span>{parsed.pubkey}</span>
-      </div>
+    <div id="keypair-card">
+      <AuthorLabel
+        className={"author-label"}
+        address={keypair.address}
+        viewingAuthorSecret={keypair.secret}
+      />
 
-      <CopyButton copyValue={parsed.address}>Copy address</CopyButton>
+      <CopyButton copyValue={keypair.address}>Copy address</CopyButton>
       <CopyButton copyValue={keypair.secret}>Copy secret</CopyButton>
     </div>
   );

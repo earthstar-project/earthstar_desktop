@@ -1,0 +1,64 @@
+:root{
+  --keypair-color: rgb(255, 145, 45);
+  --share-color: rgb(45, 189, 255);
+  --server-color: rgb(23, 200, 0);
+}
+
+button {
+  font-size: 0.8em;
+  padding: 0.4em 0.5em 0.4em 0.5em;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.066);
+  border: 1px solid rgb(211, 222, 243);
+  background: white;
+  border-radius: 6px;
+  margin: 0;
+}
+
+fieldset {
+  border: 2px solid var(--active-section-color);
+  background: rgb(255, 255, 255);
+  border-radius: 3px;
+  padding: 0.6em 0.75em;
+  box-shadow: 0 2px 10px 2px rgba(0, 0,0 , 0.1);
+}
+
+legend {
+  color: white;
+  padding: 0.5em;
+  background: var(--active-section-color);
+}
+
+hr {
+  border: 1px solid rgb(230, 230, 230)
+}
+
+table {
+  border-collapse: collapse;
+}
+
+input {
+  padding: 0.7em;
+  border-radius: 0.5em;
+  background: white;
+  border: none;
+  width: 100%;
+  padding: 0.6em;
+  box-shadow: inset 1px 2px 2px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 1.4em);
+  font-size: 0.8em;
+  border: 1px solid rgb(192, 192, 192)
+}
+
+label {
+  font-size: 0.8em;
+  color: rgb(133, 133, 133)
+}
+
+.author-label {
+  font-family: ui-monospace;
+}
+
+.error-text {
+  font-size: 0.9em;
+  color: red;
+}

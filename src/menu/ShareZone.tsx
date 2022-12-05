@@ -1,7 +1,14 @@
 import * as React from "react";
-import { useAddShare, usePeer, useShareSecret } from "react-earthstar";
+import {
+  ShareLabel,
+  useAuthorSettings,
+  useShareSecretSettings,
+  useShareSettings,
+} from "react-earthstar";
 import * as Earthstar from "earthstar";
-import CopyButton from "./CopyButton";
+import { Menu } from "@headlessui/react";
+import CopyButton from "./CopyButton.tsx";
+import "./ShareZone.css";
 
 type PossibleChoices =
   | { type: "not_made" }
@@ -13,9 +20,7 @@ type PossibleChoices =
   };
 
 export function ShareZone() {
-  const peer = usePeer();
-
-  const shares = peer.shares();
+  const [shares] = useShareSettings();
 
   const [choice, setChoice] = React.useState<
     { type: "not_made" } | { type: "create" } | { type: "add" } | {
@@ -27,7 +32,7 @@ export function ShareZone() {
   );
 
   return (
-    <fieldset>
+    <fieldset id="share-zone">
       <legend>Shares</legend>
       {choice.type === "not_made"
         ? <ShareList shares={shares} setChoice={setChoice} />
@@ -68,12 +73,13 @@ function ShareList(
   },
 ) {
   return (
-    <div>
+    <ul id="share-list">
       {shares.length === 0
         ? <div>You have no shares.</div>
         : shares.map((share) => {
           return (
             <ShareItem
+              key={share}
               onClickAddSecret={() => {
                 setChoice({ type: "add_secret", address: share });
               }}
@@ -81,7 +87,8 @@ function ShareList(
             />
           );
         })}
-      <div>
+      <hr />
+      <div id="share-btn-row">
         <button onClick={() => setChoice({ type: "add" })}>
           Add existing share
         </button>
@@ -89,7 +96,7 @@ function ShareList(
           Create new share
         </button>
       </div>
-    </div>
+    </ul>
   );
 }
 
@@ -99,21 +106,53 @@ function ShareItem(
     onClickAddSecret: () => void;
   },
 ) {
-  const peer = usePeer();
-  const [secret] = useShareSecret(address);
+  const [author] = useAuthorSettings();
+  const [, , removeShare] = useShareSettings();
+  const [secrets] = useShareSecretSettings();
+  const secret = secrets[address];
 
   return (
-    <li>
-      {address} {secret
-        ? <CopyButton copyValue={secret}>Copy secret</CopyButton>
-        : <button onClick={onClickAddSecret}>Add secret</button>}
-      <button
-        onClick={() => {
-          peer.removeReplicaByShare(address);
-        }}
-      >
-        Forget
-      </button>
+    <li className="share-list-item">
+      <ShareLabel address={address} viewingAuthorSecret={author?.secret} />
+
+      <Menu>
+        <div>
+          <Menu.Button>
+            Options
+          </Menu.Button>
+          <div className="share-item-menu">
+            <Menu.Items className="share-item-menu-items">
+              <Menu.Item>
+                <CopyButton copyValue={address}>
+                  Copy{"\u00A0"}address
+                </CopyButton>
+              </Menu.Item>
+              <Menu.Item>
+                {secret
+                  ? (
+                    <CopyButton copyValue={secret}>
+                      Copy{"\u00A0"}secret
+                    </CopyButton>
+                  )
+                  : (
+                    <button onClick={onClickAddSecret}>
+                      Add{"\u00A0"}secret
+                    </button>
+                  )}
+              </Menu.Item>
+              <Menu.Item>
+                <button
+                  onClick={() => {
+                    removeShare(address);
+                  }}
+                >
+                  Forget
+                </button>
+              </Menu.Item>
+            </Menu.Items>
+          </div>
+        </div>
+      </Menu>
     </li>
   );
 }
@@ -123,31 +162,28 @@ function ShareAddForm(
     goBack: () => void;
   },
 ) {
-  const addShare = useAddShare();
+  const [, addShare] = useShareSettings();
+  const [, addSecret] = useShareSecretSettings();
   const [address, setAddress] = React.useState("");
   const [secret, setSecret] = React.useState("");
 
   return (
     <form
-      onSubmit={async (e) => {
+      id="add-share-form"
+      onSubmit={(e) => {
         e.preventDefault();
 
         // validate
 
-        const isValid = Earthstar.checkShareIsValid(address);
+        const isValid = addShare(address);
 
         if (Earthstar.isErr(isValid)) {
-          alert("The share you provided was not valid!");
+          alert(isValid.message);
           return;
         }
 
-        const secretToUse = secret.length === 0 ? undefined : secret;
-
-        if (secretToUse) {
-          const isValid = Earthstar.Crypto.checkKeypairIsValid({
-            shareAddress: address,
-            secret: secret,
-          });
+        if (secret.length > 0) {
+          const isValid = addSecret(address, secret);
 
           if (Earthstar.isErr(isValid)) {
             alert("The secret you provided was not correct!");
@@ -155,37 +191,45 @@ function ShareAddForm(
           }
         }
 
-        // save it
-        await addShare(address, secret.length === 0 ? undefined : secret);
-
         goBack();
       }}
     >
-      <label>Address</label>
+      <label>Share address</label>
       <input
         value={address}
         onChange={(e) => {
           setAddress(e.target.value);
         }}
         required
-      >
-      </input>
-      <label>Secret (optional)</label>
+      />
+
+      <label>Share secret (optional)</label>
       <input
+        type="password"
         value={secret}
         onChange={(e) => {
           setSecret(e.target.value);
         }}
-      >
-      </input>
-      <button type="submit">Add</button>
-      <button
-        onClick={() => {
-          goBack();
-        }}
-      >
-        Cancel
-      </button>
+      />
+      {secret.length === 0
+        ? (
+          <p id="secret-explainer">
+            Without the share secret, you will only be able to read data from
+            this share.
+          </p>
+        )
+        : null}
+      <hr />
+      <div id="add-share-form-btns">
+        <button type="submit">Add</button>
+        <button
+          onClick={() => {
+            goBack();
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }
@@ -202,23 +246,27 @@ function ShareCreatorForm(
   >(null);
   const [error, setError] = React.useState<null | string>(null);
 
-  const addShare = useAddShare();
+  const [, addShare] = useShareSettings();
+  const [, addSecret] = useShareSecretSettings();
 
   return (
     <form
-      onSubmit={async (e) => {
+      onSubmit={(e) => {
         e.preventDefault();
 
         if (proposedKeypair) {
-          await addShare(proposedKeypair.shareAddress, proposedKeypair.secret);
+          addShare(proposedKeypair.shareAddress);
+          addSecret(proposedKeypair.shareAddress, proposedKeypair.secret);
         }
 
         goBack();
       }}
     >
-      <div>
+      <div id="creator-form-share-address">
         <span>+</span>
         <input
+          placeholder="myshare"
+          id="creator-form-share-address-input"
           value={name}
           onChange={async (e) => {
             e.preventDefault();
@@ -240,31 +288,35 @@ function ShareCreatorForm(
         />
       </div>
 
-      {error ? <p className="text-red-700 text-sm">{error}</p> : null}
+      {error && name.length > 0 ? <p className="error-text">{error}</p> : null}
       {proposedKeypair
         ? (
           <>
-            <div className="text-4xl font-bold text-gray-300 text-center">
-              ⬇
-            </div>
-            <KeypairCard keypair={proposedKeypair} />
-            <p>
+            <hr />
+            <ShareCard keypair={proposedKeypair} />
+            <p className="share-explainer">
               Share the <b>address</b> with people you would like to grant{" "}
               <b>read</b> access to.
             </p>
-            <p>
+            <p className="share-explainer">
               Share the <b>secret</b> with people you would like to grant{" "}
               <b>write</b> access to.
             </p>
-            <p className="text-sm text-gray-800 dark:text-gray-200">
+            <p className="share-explainer">
               Make sure to save the generated address and secret someplace safe.
               Only you have access to it, so it can never be recovered or reset!
             </p>
-            <button className="btn">Add this share keypair</button>
+            <div id="creator-form-btns">
+              <button className="btn">Add this share keypair</button>
+              <button onClick={() => goBack()}>Cancel</button>
+            </div>
           </>
         )
-        : null}
-      <button onClick={() => goBack()}>Cancel</button>
+        : (
+          <div id="creator-form-btns">
+            <button onClick={() => goBack()}>Cancel</button>
+          </div>
+        )}
     </form>
   );
 }
@@ -273,24 +325,20 @@ function ShareAddSecretForm(
   { address, cancel: goBack }: { address: string; cancel: () => void },
 ) {
   const [secret, setSecret] = React.useState("");
-  const [, setShareSecret] = useShareSecret(address);
+  const [, setShareSecret] = useShareSecretSettings();
 
   return (
     <form
-      onSubmit={async (e) => {
+      onSubmit={(e) => {
         e.preventDefault();
 
-        const isValid = await Earthstar.Crypto.checkKeypairIsValid({
-          address,
-          secret,
-        });
+        const isValid = setShareSecret(address, secret);
 
         if (Earthstar.isErr(isValid)) {
           alert("That secret is not correct!");
           return;
         }
 
-        setShareSecret(secret);
         goBack();
       }}
     >
@@ -314,24 +362,18 @@ function ShareAddSecretForm(
   );
 }
 
-function KeypairCard({ keypair }: { keypair: Earthstar.ShareKeypair }) {
-  const parsed = Earthstar.parseShareAddress(keypair.shareAddress);
-
-  if (Earthstar.isErr(parsed)) {
-    return <div>Something's wrong with the keypair.</div>;
-  }
+function ShareCard({ keypair }: { keypair: Earthstar.ShareKeypair }) {
+  const [author] = useAuthorSettings();
 
   return (
-    <div>
-      <div>
-        <span>+</span>
-        <span>{parsed.name}</span>
-        <span>.</span>
-        <span>{parsed.pubkey}</span>
-      </div>
-
-      <CopyButton copyValue={parsed.address}>Copy address</CopyButton>
+    <fieldset id="proposed-share">
+      <legend>Proposed share keypair</legend>
+      <ShareLabel
+        address={keypair.shareAddress}
+        viewingAuthorSecret={author?.secret}
+      />
+      <CopyButton copyValue={keypair.shareAddress}>Copy address</CopyButton>
       <CopyButton copyValue={keypair.secret}>Copy secret</CopyButton>
-    </div>
+    </fieldset>
   );
 }

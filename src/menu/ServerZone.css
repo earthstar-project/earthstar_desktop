@@ -1,0 +1,77 @@
+#server-zone {
+	--active-section-color: var(--server-color);
+}
+
+#server-items {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.server-item {
+
+	margin: 1em 0
+}
+
+.server-item-address-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1ch;
+}
+
+.server-item-buttons {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5ch;
+}
+
+#add-server-form {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5ch;
+}
+
+.sync-status {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5ch;
+}
+
+.sync-status-msg {
+	color: rgb(140, 140, 140);
+	font-size: 0.8em;
+}
+
+.status-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 5px;
+	box-shadow: 1px 1px 1px 1px rgba(0, 0,0 , 0.05);
+}
+
+.failed-dot {
+	background: red;
+}
+
+.succeeding-dot {
+	background: var(--active-section-color)
+}
+
+.nothing-in-common-dot {
+	background: orange
+}
+
+.server-item-address-status {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3ch;
+}
+
+.show-common-shares-btn {
+	box-shadow: none;
+	background: none;
+	border: none;
+	padding: 0;
+	color: var(--active-section-color);
+}
